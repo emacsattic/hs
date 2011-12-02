@@ -29,7 +29,6 @@
 
 (defun hs-tags-generate-interactive (&optional cmd)
   "Send a (silent; don't tell me about it in the REPL) arbitrary command."
-  (interactive)
   (let ((project (hs-project)))
     (unless (hs-process-current-dir (hs-project-process project))
       (hs-process-cd-interactive)
