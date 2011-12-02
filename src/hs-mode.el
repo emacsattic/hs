@@ -74,7 +74,7 @@
     ;; Function declarations
     ("^[_a-z][A-Za-z0-9_']*" . font-lock-function-name-face)
     ;; Numbers
-    ("[0-9]+\\.?[0-9]*" . font-lock-constant-face)
+    ("\\<[0-9]+\\>\\.?[0-9]*" . font-lock-constant-face)
     ;; Operators
     ("[-!#$%&\\*\\+\\./<=>\\?@\\\\^\\|~]+" . font-lock-constant-face)
     ;; Reserved symbols
