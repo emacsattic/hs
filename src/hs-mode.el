@@ -43,7 +43,6 @@
   (set (make-local-variable 'comment-end-skip) "[ \t]*\\(-}\\|\\s>\\)")
   (hs-tags-generate-interactive)
   (hs-completion)
-  (run-mode-hooks)
   (setq hs-imenu-generic-expression
         '(("Functions"  "^\\([a-z].+\\) ::" 1)
           ("Types" "^\\(data \\|newtype \\|type \\)\\([^=]*[^:]\\)=" 2)
