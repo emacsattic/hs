@@ -34,6 +34,7 @@
   (use-local-map hs-mode-map)
   (setq major-mode 'hs-mode)
   (setq mode-name "Haskell")
+  (set (make-local-variable 'indent-line-function) hs-config-indent-function)
   (set (make-local-variable 'font-lock-defaults)
        '(hs-mode-font-lock-keywords t nil nil nil))
   (set (make-local-variable 'comment-start) "-- ")

@@ -39,6 +39,9 @@
 (require 'hs-types)
 (require 'hs-core-mode)
 (require 'hs-mode)
+(require 'hs-indent-hsgm)
+(require 'hs-indent-kb)
+(require 'hs-indent-glfsf)
 
 (defun hs ()
   "Initialize everything necessary for correct functioning."

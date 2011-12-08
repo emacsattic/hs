@@ -22,6 +22,13 @@
 
 (defun hs-config ())
 
+;; Options are:
+;; * 'indent-relative — Default Emacs indentation.
+;; * 'hs-indent-hsgm — A simple indentation mode by Heribert Schuetz, Graeme E Moss
+;; * 'hs-indent-kb-indent-line — A non-trivial indentation mode by Kristof Bastiaensen
+;; * 'hs-indent-glfsf-cycle — A “semi-intelligent” indentation mode by Guy Lapalme, Free Software Foundation, Inc.
+(defvar hs-config-indent-function 'hs-indent-hsgm)
+
 (defvar hs-config-echo-all nil)
 
 (defvar hs-config-preliminary-load-file nil)
