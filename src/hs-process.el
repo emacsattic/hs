@@ -55,10 +55,9 @@
 
 (defun hs-process-info-of-passive-interactive (symbol)
   "Send an arbitrary command (no printing in the REPL)."
-  (let ((project (hs-project)))
-    (setf (hs-process-cmd (hs-project-process project)) 'info-of-passive)
-    (process-send-string (hs-process-process (hs-project-process project))
-                         (concat ":i " symbol "\n"))))
+  (hs-process-queue-command (hs-project)
+                            'info-of-passive
+                            (concat ":i " symbol "\n")))
 
 (defun hs-process-start (project &optional name)
   "Start the inferior haskell process."
@@ -176,7 +175,7 @@
 
 (defun hs-process-collect (project response process type)
   "Collect input for the response until receives a prompt."
-                                        ;  (message (format "%s: %s" (hs-process-name process) response))
+  ;(message (format "%s: %s" (hs-process-name process) response))
   (setf (hs-process-response process)
         (concat (hs-process-response process) response))
   (while (hs-process-live-updates project process))
@@ -190,7 +189,8 @@
             ""
             (hs-process-response process))
            type)
-      (hs-process-reset process))))
+      (hs-process-reset process)
+      (hs-process-trigger-queued-command process))))
 
 (defun hs-process-reset (process)
   (progn (setf (hs-process-response-cursor process) 0)
@@ -200,6 +200,9 @@
 
 (defun hs-process-response-handler (project process response type)
   "Handle receiving a response."
+  ;; Pop off this command from the queue.
+  (setf (hs-process-queue process) (cdr (hs-process-queue process)))
+  ;; Handle reply.
   (ecase (hs-process-cmd process)
     ('startup (hs-process-reset process)
               (with-current-buffer (hs-interactive-mode-name project)
@@ -214,13 +217,11 @@
     ('load-file-prelim
      (setf (hs-process-response-cursor process) 0)
      (when (hs-process-consume process "Ok, modules loaded: \\(.+\\)$")
-;       (message "Ok, modules loaded. Continuing…")
        (hs-process-reset process)
-       (setf (hs-process-cmd (hs-project-process project)) 'load-file)
-       (process-send-string (hs-process-process (hs-project-process project))
-                            (concat ":load " (hs-project-current-load-file-name
-                                              project)
-                                    "\n")))
+       (hs-process-queue-command
+        project
+        'load-file
+        (concat ":load " (hs-project-current-load-file-name project) "\n")))
      t)
     ('tags-generate (progn (let ((tags-revert-without-query t))
                              (when (hs-process-current-dir process)
@@ -460,9 +461,7 @@
 
 (defun hs-process-eval (project expr)
   "Evaluate an expression."
-  (setf (hs-process-cmd (hs-project-process project)) 'eval)
-  (process-send-string (hs-process-process (hs-project-process project))
-                       (concat expr "\n")))
+  (hs-process-queue-command project 'eval (concat expr "\n")))
 
 (defun hs-process-load-file (project &optional file)
   "Load a file."
@@ -477,13 +476,14 @@
       (if hs-config-preliminary-load-file
           (progn
             (setf (hs-project-current-load-file-name project) file-name)
-            (setf (hs-process-cmd (hs-project-slave-process project)) 'load-file-prelim)
-            (process-send-string (hs-process-process (hs-project-slave-process project))
-                                 (concat ":load " file-name "\n")))
-        (progn
-          (setf (hs-process-cmd (hs-project-process project)) 'load-file)
-          (process-send-string (hs-process-process (hs-project-process project))
-                               (concat ":load " file-name "\n")))))))
+            (hs-process-queue-slave-command 
+             project
+             'load-file-prelim
+             (concat ":load " file-name "\n")))
+        (hs-process-queue-command 
+         project
+         'load-file
+         (concat ":load " file-name "\n"))))))
 
 (defun hs-process-cd (project dir)
   "Change current directory of the REPL."
@@ -504,27 +504,57 @@
 
 (defun hs-process-arbitrary-command (project cmd)
   "Send an arbitrary command."
-  (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
   (hs-interactive-mode-echo-read-only project (concat (hs-lang-command-output) "\n"))
-  (process-send-string (hs-process-process (hs-project-process project))
-                       (concat cmd "\n")))
+  (hs-process-queue-command
+   project
+   'arbitrary
+   (concat cmd "\n")))
 
 (defun hs-process-background-arbitrary-command (project cmd)
   "Send an arbitrary command (no printing in the REPL)."
-  (setf (hs-process-cmd (hs-project-process project)) 'background-arbitrary)
-  (process-send-string (hs-process-process (hs-project-process project))
-                       (concat cmd "\n")))
+  (hs-process-queue-command
+   project
+   'background-arbitrary
+   (concat cmd "\n")))
 
 (defun hs-process-type-of (project symbol)
   "Send an arbitrary command (no printing in the REPL)."
-  (setf (hs-process-cmd (hs-project-process project)) 'type-of)
-  (process-send-string (hs-process-process (hs-project-process project))
-                       (concat ":t " symbol "\n")))
+  (hs-process-queue-command
+   project
+   'type-of
+   (concat ":t " symbol "\n")))
 
 (defun hs-process-info-of (project symbol)
   "Send an arbitrary command (no printing in the REPL)."
-  (setf (hs-process-cmd (hs-project-process project)) 'info-of)
-  (process-send-string (hs-process-process (hs-project-process project))
-                       (concat ":i " symbol "\n")))
+  (hs-process-queue-command
+   project
+   'info-of
+   (concat ":i " symbol "\n")))
+
+(defun hs-process-queue-command (project cmd data)
+  "Add a command to the queue to be processed in FIFO."
+  (setf (hs-process-queue (hs-project-process project))
+        (append (hs-process-queue (hs-project-process project))
+                (list (list cmd data))))
+  ;(message (format "Queued command `%s' with data: %s" cmd data))
+  (when (= 1 (length (hs-process-queue (hs-project-process project))))
+    (hs-process-trigger-queued-command (hs-project-process project))))
+
+(defun hs-process-queue-slave-command (project cmd data)
+  "Add a command to the slave queue to be processed in FIFO."
+  (setf (hs-process-queue (hs-project-slave-process project))
+        (append (hs-process-queue (hs-project-slave-process project))
+                (list (list cmd data))))
+  ;(message (format "Queued command `%s' with data: %s" cmd data))
+  (when (= 1 (length (hs-process-queue (hs-project-slave-nprocess project))))
+    (hs-process-trigger-queued-command (hs-project-slave-process project))))
+
+(defun hs-process-trigger-queued-command (process)
+  "Trigger a the next command in the command queue to be sent to the process."
+  (unless (null (hs-process-queue process))
+    (let ((cmd (car (hs-process-queue process))))
+      ;(message (format "Triggering queued command `%s'." (car cmd)))
+      (setf (hs-process-cmd process) (car cmd))
+      (process-send-string (hs-process-process process) (cadr cmd)))))
 
 (provide 'hs-process)

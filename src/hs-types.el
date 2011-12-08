@@ -43,7 +43,8 @@
   response-cursor
   load-dirs
   current-dir
-  response-callback)
+  response-callback
+  queue)
 
 (defun hs-types ())
 

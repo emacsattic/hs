@@ -140,3 +140,5 @@
 (global-set-key (kbd "C-c t") 'hs-cabal-script-interactive)
 (global-set-key (kbd "C-c C-c") 'hs-cabal-build-interactive)
 (global-set-key (kbd "C-c c") 'hs-cabal-ido-interactive)
+
+(hs)

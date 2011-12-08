@@ -58,13 +58,11 @@
 
 (defun hs-cabal-command (project command)
   "Send the Cabal build command."
-  (setf (hs-process-cmd (hs-project-process project)) 'arbitrary)
-  (process-send-string
-   (hs-process-process (hs-project-process project))
+  (hs-process-queue-command
+   project
+   'arbitrary
    (concat ":!cd " (hs-cabal-dir project)
-           " && " (if hs-config-use-cabal-dev
-                      hs-config-cabal-dev-bin
-                    "cabal") 
+           " && " (if hs-config-use-cabal-dev hs-config-cabal-dev-bin "cabal") 
            " " command
            " && cd " (hs-process-current-dir (hs-project-process project)) "\n")))
 

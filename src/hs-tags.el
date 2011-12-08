@@ -34,10 +34,11 @@
       (hs-process-cd-interactive)
       (hs-process-reset (hs-project-process project)))
     (message "Generating tags...")
-    (setf (hs-process-cmd (hs-project-process project)) 'tags-generate)
-    (process-send-string (hs-process-process (hs-project-process project))
-                         (concat (if cmd
-                                     cmd
-                                   hs-config-tags-cmd) "\n"))))
+    (hs-process-queue-command
+     (hs-project)
+     'tags-generate
+     (concat (if cmd
+                 cmd
+               hs-config-tags-cmd) "\n"))))
 
 (provide 'hs-tags)
