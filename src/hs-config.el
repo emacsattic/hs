@@ -29,6 +29,10 @@
 ;; * 'hs-indent-glfsf-cycle — A “semi-intelligent” indentation mode by Guy Lapalme, Free Software Foundation, Inc.
 (defvar hs-config-indent-function 'hs-indent-hsgm)
 
+;; Options are:
+;; * 'hs-indent-glfsf-cycle — A simple de-indentation function based on hs-indent-hsgm.
+(defvar hs-config-unindent-function 'hs-indent-hsgm-backtab)
+
 (defvar hs-config-echo-all nil)
 
 (defvar hs-config-preliminary-load-file nil)

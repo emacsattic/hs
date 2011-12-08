@@ -83,6 +83,21 @@ column, `tab-to-tab-stop' is done instead."
 	  (set-marker opoint nil))
       (tab-to-tab-stop))))
 
+(defun hs-indent-hsgm-backtab ()
+  "Get the number of indent steps to get to >=this column."
+  (interactive)
+  (let ((current-point (point))
+        (i 0)
+        (x 0))
+    (goto-char (line-beginning-position))
+    (save-excursion
+      (while (< (point) current-point)
+        (hs-indent-hsgm)
+        (setq i (+ i 1))))
+    (while (< x (- i 1))
+      (hs-indent-hsgm)
+      (setq x (+ x 1)))))
+
 (defvar hs-indent-hsgm-old)
 
 ;; The main functions.
