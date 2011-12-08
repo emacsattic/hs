@@ -87,6 +87,9 @@ dependencies) in the distribution in future.
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
+* Extraction of types from docs, perhaps pilfer from haskell-mode.
+* Hugs support.  Might "just work" with some tweaks to output scanning.
+* Maybe pilfer some module scanning stuff from inf-haskell.
 * Indentation that doesn't suck, including indenting/deindenting whole blocks automatically
 * GHCi interaction
   * Syntax-highlighted prompt
