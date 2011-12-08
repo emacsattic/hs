@@ -57,6 +57,7 @@ dependencies) in the distribution in future.
 
 # DONE
 
+* GHC core mode
 * Figuring out project from .cabal file
 * Named sessions
 * Collapsed/reduced error messages.
