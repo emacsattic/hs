@@ -557,4 +557,9 @@
       (setf (hs-process-cmd process) (car cmd))
       (process-send-string (hs-process-process process) (cadr cmd)))))
 
+(defun hs-process-interrupt-interactive ()
+  "Interrupt the process (SIGINT)."
+  (interactive)
+  (interrupt-process (hs-process-process (hs-project-process (hs-project)))))
+
 (provide 'hs-process)

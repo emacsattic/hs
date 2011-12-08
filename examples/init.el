@@ -138,7 +138,7 @@
 ;; It's nice to have these globally defined so that you can
 ;; build/re-build/run scripts related to your project from anywhere.
 (global-set-key (kbd "C-c t") 'hs-cabal-script-interactive)
-(global-set-key (kbd "C-c C-c") 'hs-cabal-build-interactive)
+(global-set-key (kbd "C-c C-c") 'hs-process-interrupt-interactive)
 (global-set-key (kbd "C-c c") 'hs-cabal-ido-interactive)
 
 (hs)
