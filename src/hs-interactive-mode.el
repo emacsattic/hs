@@ -181,15 +181,22 @@
                   (col (match-string 3 line)))
               (let* ((cabal-path (hs-project-cabal-dir project))
                      (src-path (hs-process-current-dir (hs-project-process project)))
-                     (cabal-relative-file (concat cabal-path "/"
-                                                  (file-relative-name file
-                                                                      cabal-path)))
-                     (src-relative-file (concat src-path "/" (file-relative-name file
-                                                                                 src-path))))
+                     (cabal-relative-file (concat cabal-path "/" file))
+                     (src-relative-file (concat src-path "/" file))
+                     (cabal-relative-file-rel (concat cabal-path "/" 
+                                                      (file-relative-name file
+                                                                          cabal-path)))
+                     (src-relative-file-rel (concat src-path "/" 
+                                                    (file-relative-name file
+                                                                        src-path))))
                 (let ((file (cond ((file-exists-p cabal-relative-file)
                                    cabal-relative-file)
                                   ((file-exists-p src-relative-file) 
-                                   src-relative-file))))
+                                   src-relative-file)
+                                  ((file-exists-p src-relative-file-rel) 
+                                   src-relative-file)
+                                  ((file-exists-p cabal-relative-file-rel) 
+                                   cabal-relative-file))))
                   (when file
                     (goto-char (point-max))
                     (other-window 1)
