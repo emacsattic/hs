@@ -31,7 +31,8 @@
   cabal-dir
   cabal-dev-dir
   prompt-history
-  current-load-file-name)
+  current-load-file-name
+  installed-packages)
 
 (defstruct
   (hs-process

@@ -4,3 +4,5 @@
          (match (string-match "version \\([0-9\.]+\\)$" out)))
     (when match
       (match-string 1 out))))
+
+(provide 'hs-ghc)

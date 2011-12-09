@@ -118,4 +118,17 @@
       (add-to-list '*hs-projects* project)
       project)))
 
+(defun hs-project-packages (project)
+  "Get the packages installed for `project'."
+  (let ((packages (hs-project-installed-packages project)))
+    (if packages
+        packages
+      (let* ((user-dev-packages (hs-package-get-all
+                                 (hs-package-conf-path-get project)))
+             (global-packages (hs-package-get-all
+                               (hs-package-conf-global-path-get)))
+             (packages (append user-dev-packages global-packages)))
+        (setf (hs-project-installed-packages project) user-dev-packages)
+        packages))))
+
 (provide 'hs-project)

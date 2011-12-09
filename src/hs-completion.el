@@ -27,6 +27,9 @@
      . (lambda ()
          (all-completions ac-target
                           (append nil
+                                  (apply 'append
+                                         (mapcar 'hs-package-exposed-modules
+                                                 (hs-project-packages (hs-project))))
                                   hs-completion-ghc-warning-options
                                   hs-completion-ghc-extensions
                                   hs-completion-prelude

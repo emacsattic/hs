@@ -37,7 +37,8 @@
                         cabal-path
                       (concat cabal-path "/"))
                     (hs-ghc-version)))
-        (hs-package-conf-user-path-get))))
+        (hs-package-conf-user-path-get))
+    (hs-package-conf-user-path-get)))
 
 (defun hs-package-conf-user-path-get ()
   "Get the user conf path."
@@ -82,8 +83,10 @@
      :categories (cdr (assoc "category" pkg))
      :authors (cdr (assoc "author" pkg))
      :is-exposed (equal "True" (cdr (assoc "exposed" pkg)))
-     :exposed-modules (cdr (assoc "exposed-modules" pkg))
-     :hidden-modules (cdr (assoc "hidden-modules" pkg))
+     :exposed-modules (split-string (or (cdr (assoc "exposed-modules" pkg)) "")
+                                    "[\n ]")
+     :hidden-modules (split-string (or (cdr (assoc "hidden-modules" pkg)) "")
+                                   "[\n ]")
      :imports-dirs (cdr (assoc "imports-dirs" pkg))
      :library-dirs (cdr (assoc "library-dirs" pkg))
      :hs-libraries (cdr (assoc "hs-libraries" pkg))

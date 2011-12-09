@@ -43,6 +43,8 @@
 (require 'hs-indent-kb)
 (require 'hs-indent-glfsf)
 (require 'hs-show)
+(require 'hs-package)
+(require 'hs-ghc)
 
 (defun hs ()
   "Initialize everything necessary for correct functioning."
