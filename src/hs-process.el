@@ -291,7 +291,10 @@
                              (hs-process-response-cursor process)))
             (setf (hs-process-response-cursor process) 0))
         (progn (hs-interactive-mode-raise (hs-project) error-msg)
-               (hs-process-reset process)))))))
+               (hs-process-reset process)
+               ;; Pop off this item because it's a bad input.
+               (setf (hs-process-queue process) (cdr (hs-process-queue process)))
+               (hs-process-trigger-queued-command process)))))))
 
 (defun hs-process-trigger-build-updates (project process &optional prelim)
   "Trigger the 'loading module' updates if any."
