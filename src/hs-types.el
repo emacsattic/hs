@@ -46,6 +46,40 @@
   response-callback
   queue)
 
+(defstruct
+  (hs-package
+   (:constructor hs-package-make))
+  name
+  version
+  id
+  license
+  copyright
+  maintainer
+  stability
+  homepage
+  package-url
+  description
+  categories
+  authors
+  is-exposed
+  exposed-modules
+  hidden-modules
+  imports-dirs
+  library-dirs
+  hs-libraries
+  extra-libraries
+  extra-ghci-libraries
+  include-dirs
+  includes
+  depends
+  hugs-options
+  cc-options
+  ld-options
+  framework-dirs
+  frameworks
+  haddock-interfaces
+  haddock-html)
+
 (defun hs-types ())
 
 (provide 'hs-types)
