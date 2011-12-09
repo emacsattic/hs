@@ -228,17 +228,22 @@
                           " "
                           input))))))
 
-(defun hs-interactive-mode-eval-insert-result (project result)
-  "Insert the result of an eval."
+(defun hs-interactive-mode-eval-insert-result (project text)
+  "Insert the result of an eval as a pretty printed Showable, if
+  parseable, or otherwise just as-is."
   (with-current-buffer (hs-interactive-mode-buffer project)
     (goto-char (point-max))
     (insert "\n")
-    (insert (propertize result
-                        'face 'hs-faces-ghci-result
-                        'read-only t
-                        'rear-nonsticky t
-                        'prompt t
-                        'result t))))
+    (let ((result (and hs-config-pretty-print-show
+                       (hs-show-parse-or-nil (concat "(" text ")")))))
+      (if result
+          (hs-show-insert-pretty 0 result)
+        (insert (propertize text
+                            'face 'hs-faces-ghci-result
+                            'read-only t
+                            'rear-nonsticky t
+                            'prompt t
+                            'result t))))))
 
 (defun hs-interactive-mode-history-toggle (n)
   "Toggle the history n items up or down."
@@ -281,6 +286,7 @@
   (let ((inhibit-read-only t))
     (set-text-properties (point-min) (point-max) nil))
   (delete-region (point-min) (point-max))
+  (mapcar 'delete-overlay (overlays-in (point-min) (point-max)))
   (hs-interactive-mode-prompt (hs-project)))
 
 (defun hs-interactive-mode-raise (project msg)
