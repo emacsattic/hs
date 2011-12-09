@@ -234,10 +234,16 @@
   (with-current-buffer (hs-interactive-mode-buffer project)
     (goto-char (point-max))
     (insert "\n")
-    (let ((result (and hs-config-pretty-print-show
+    (let ((start-point (point)) 
+          (result (and hs-config-pretty-print-show
                        (hs-show-parse-or-nil (concat "(" text ")")))))
       (if result
-          (hs-show-insert-pretty 0 result)
+          (progn (hs-show-insert-pretty 0 result)
+                 (add-text-properties start-point (point)
+                                      '(read-only t
+                                                  rear-nonsticky t
+                                                  prompt t
+                                                  result t)))
         (insert (propertize text
                             'face 'hs-faces-ghci-result
                             'read-only t
