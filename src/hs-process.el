@@ -549,7 +549,7 @@
         (append (hs-process-queue (hs-project-slave-process project))
                 (list (list cmd data))))
   ;(message (format "Queued command `%s' with data: %s" cmd data))
-  (when (= 1 (length (hs-process-queue (hs-project-slave-nprocess project))))
+  (when (= 1 (length (hs-process-queue (hs-project-slave-process project))))
     (hs-process-trigger-queued-command (hs-project-slave-process project))))
 
 (defun hs-process-trigger-queued-command (process)
