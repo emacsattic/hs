@@ -27,6 +27,7 @@
 
 (require 'hs-types)
 
+;;;###autoload
 (define-derived-mode hs-mode nil "Haskell" ""
   (kill-all-local-variables)
   (make-local-variable 'hs-mode)
