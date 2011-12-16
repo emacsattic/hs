@@ -1,18 +1,18 @@
-# ALPHA — don't try to use!
+# ALPHA — QUICK TRY (includes dependencies, just run it :-)
 
-I'm still working on it. See the issue tracker for upcoming features
-and bugs. Please wait until test-cases (see “Complete unit testing”
-milestone) have been written before contributing patches.
+It's a bit early days, but the brave who can put up with weirdness and alpha code can try:
+
+    $ cabal install hasktags
+    $ emacs -nw -Q -l examples/init.el
+
+See examples/init.el for example bindings.
+
+I will include auto-complete and auto-complete-etags.el (and any other
+dependencies) in the distribution in future.
 
 # CONTRIBUTING
 
 **Feedback**
-
-I kinda avoided asking for feedback because I have a lot of stuff
-planned and bugs to fix still. If anyone wants to create tickets
-(dunno if you guys can create milestones) for any neat ideas you have
-(not guaranteed to be implemented by me but good to put in a tangible
-list):
 
 * [Milestones are here.](https://github.com/chrisdone/haskell-emacs/issues/milestones)
 * I also maintain the TODO/DONE in this README.md.
@@ -43,18 +43,6 @@ Architecture-wise, your main points of interest are:
 
 Most things start in hs-mode, hs-interactive-mode and hs-process.
 
-# QUICK TRY (includes dependencies, just run it :-)
-
-It's a bit early days, but the brave who can put up with weirdness and alpha code can try:
-
-    $ cabal install hasktags
-    $ emacs -nw -Q -l examples/init.el
-
-See examples/init.el for example bindings.
-
-I will include auto-complete and auto-complete-etags.el (and any other
-dependencies) in the distribution in future.
-
 # DONE
 
 * GHC core mode
@@ -84,31 +72,29 @@ dependencies) in the distribution in future.
 * Creation of base Cabal projects
 * Preliminary loading of files in GHCi with a separate GHCi session,
   this avoids losing type information on a failed compile
+* Show-based value inspection
+* Module awareness
+* Indentation that doesn't suck
+* Cabal integration
+  * Configuration
+  * Interactive creation/management of Cabal file
 
 # TODO — EASY / TRIVIALLY SPECIFIED
 
 * Extraction of types from docs, perhaps pilfer from haskell-mode.
 * Hugs support.  Might "just work" with some tweaks to output scanning.
 * Maybe pilfer some module scanning stuff from inf-haskell.
-* Indentation that doesn't suck, including indenting/deindenting whole blocks automatically
-* GHCi interaction
-  * Syntax-highlighted prompt
-  * Show-based value inspection
-  * Module awareness
 * Cabal integration
-  * Configuration
   * Automatic dependency inserting
-  * Interactive creation/management of Cabal file
 * Source code editing
   * Haskell-aware code-folding
   * Documentation of symbol at point
 * Module import-export awareness
   * Completion based on:
-   * imported modules
-   * installed modules with automatic importation and Cabal-file dependency adding
+    * imported modules
+    * installed modules with automatic importation and Cabal-file dependency adding
   * Automatic importation and de-importation of modules for used symbols
   * Hoogle search support
-  * Hayoo search support
 * Automake/correctness checking
   * Compilation on an interval
   * On-the-fly hint suggestions
@@ -118,6 +104,7 @@ dependencies) in the distribution in future.
 # TODO — NOT SURE / TRICKY / NONTRIVIALLY SPECIFIED
 
 * GHCi interaction
+  * Syntax-highlighted prompt
   * Debugger tracebacks
 * Source code editing
   * Truly syntax-aware editing
