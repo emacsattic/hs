@@ -1,14 +1,14 @@
-# ALPHA — QUICK TRY (includes dependencies, just run it :-)
+# BETA — QUICK TRY
 
-It's a bit early days, but the brave who can put up with weirdness and alpha code can try:
+Dependencies are included, so that you can just run the commandline 
+and try it on your existing projects without messing with your .emacs.
+
+The brave who can put up with bugs can try:
 
     $ cabal install hasktags
     $ emacs -nw -Q -l examples/init.el
 
-See examples/init.el for example bindings.
-
-I will include auto-complete and auto-complete-etags.el (and any other
-dependencies) in the distribution in future.
+See examples/init.el for example bindings. 
 
 # CONTRIBUTING
 
@@ -20,12 +20,10 @@ dependencies) in the distribution in future.
 
 **Developing**
 
-* Patches welcome, but do it in a dev branch, not the master branch
-* Not interested in "I fixed indentation and removed whitespace/I refactored X" patches at
-  the moment. Only commit hunks related to a real bugfix or new feature change.
+* Patches welcome, but do it in a dev branch, not the master branch.
 * Please make small, isolated patches and preferably open a
-  ticket and associate your commit(s) with the ticket so that we have
-  a history trace.
+  ticket and associate your commit(s) with the ticket, or a pull request,
+  so that we have a history trace.
 * Make sure your patches work with `emacs -Q -l examples/init.el`,
   this is a good test to check you're not making any assumptions and
   devs and users can still try and test easily.
