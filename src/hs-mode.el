@@ -44,7 +44,7 @@
   (set (make-local-variable 'comment-start) "-- ")
   (set (make-local-variable 'comment-padding) 0)
   (set (make-local-variable 'comment-start-skip) "[-{]-[ \t]*")
-  (set (make-local-variable 'comment-end) "\n")
+  (set (make-local-variable 'comment-end) "")
   (set (make-local-variable 'comment-end-skip) "[ \t]*\\(-}\\|\\s>\\)")
   (hs-completion)
   (setq hs-imenu-generic-expression
