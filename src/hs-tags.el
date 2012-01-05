@@ -41,4 +41,9 @@
                  cmd
                hs-config-tags-cmd) "\n"))))
 
+(defun hs-tags-find (&optional next-p)
+  "The tag find function."
+  (interactive "P")
+  (find-tag (hs-ident-at-point) next-p))
+
 (provide 'hs-tags)

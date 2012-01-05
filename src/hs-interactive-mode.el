@@ -30,6 +30,7 @@
     (define-key map (kbd "C-j") 'hs-interactive-mode-newline-indent)
     (define-key map (kbd "C-a") 'hs-interactive-mode-handle-start-interactive)
     (define-key map (kbd "C-c C-k") 'hs-interactive-mode-clear)
+    (define-key map (kbd "C-c C-c") 'hs-process-interrupt-interactive)
     (define-key map (kbd "M-p")
       '(lambda () (interactive) (hs-interactive-mode-history-toggle 1)))
     (define-key map (kbd "M-n")

@@ -71,6 +71,9 @@
 
    ;; Run a cabal command (prompting for which command).
    (define-key hs-mode-map (kbd "C-c c") 'hs-cabal-ido-interactive)
+   
+   ;; For dependency searching.
+   (define-key hs-mode-map (kbd "M-.") 'hs-tags-find)
 
    ;; Run a script within the project directory.
    ;; E.g., define: (setq hs-config-scripts '("scripts/dothis" "scripts/dothat"))
