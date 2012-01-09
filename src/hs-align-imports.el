@@ -67,16 +67,17 @@
 (defun hs-align-imports ()
   "Align all the imports in the buffer."
   (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (let* ((imports (hs-align-imports-collect))
-           (padding (hs-align-imports-padding imports)))
-      (mapc (lambda (x)
-              (goto-char (cdr x))
-              (delete-region (point) (line-end-position))
-              (insert (hs-align-imports-chomp
-                       (hs-align-imports-fill padding (car x)))))
-            imports)))
+  (when (hs-sort-imports-line-match)
+    (save-excursion
+      (goto-char (point-min))
+      (let* ((imports (hs-align-imports-collect))
+             (padding (hs-align-imports-padding imports)))
+        (mapc (lambda (x)
+                (goto-char (cdr x))
+                (delete-region (point) (line-end-position))
+                (insert (hs-align-imports-chomp
+                         (hs-align-imports-fill padding (car x)))))
+              imports))))
   nil)
 
 (defun hs-align-imports-collect ()
