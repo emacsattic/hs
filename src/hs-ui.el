@@ -29,7 +29,7 @@
   "Message only one line, multiple lines just disturbs the programmer."
   (let ((lines (split-string str "\n" t)))
     (when (and (car lines) (stringp (car lines)))
-      (message (concat (car lines)
+      (message "%s" (concat (car lines)
                        (if (and (cdr lines) (stringp (cadr lines)))
                            (format " [ %s … ]" (hs-string-take (hs-trim (cadr lines)) 10))
                            ""))))))

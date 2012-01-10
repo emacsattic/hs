@@ -105,7 +105,7 @@
 
 (defun hs-process-filter (proc response)
   "The filter for the process pipe."
-  (when hs-config-echo-all (message response))
+  (when hs-config-echo-all (message "%s" response))
   (let ((project (hs-process-project-by-proc proc)))
     (when project
       (when (not (eq (hs-process-cmd (hs-project-process project))
@@ -117,7 +117,7 @@
 
 (defun hs-process-slave-filter (proc response)
   "The filter for the slave process pipe."
-  (when hs-config-echo-all (message response))
+  (when hs-config-echo-all (message "%s" response))
   (let ((project (hs-process-project-by-proc proc "slave")))
     (when project
       (when (not (eq (hs-process-cmd (hs-project-slave-process project))
