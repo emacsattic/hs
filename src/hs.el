@@ -1,4 +1,4 @@
-;;; hs.el — Haskell IDE for Emacs.
+;;; hs.el --- Haskell IDE for Emacs.
 
 ;; Copyright (C) 2011 Chris Done
 
