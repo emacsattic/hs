@@ -154,13 +154,31 @@ May return a qualified name."
         (buffer-substring-no-properties start end)))))
 
 (defun hs-mode-space-info ()
+  "Do something useful on space, some cases type info, other cases filling out syntax."
   (interactive)
-  (insert " ")
-  (backward-char)
-  (let ((ident (hs-ident-at-point)))
-    (forward-char)
-    (when (and (stringp ident) (not (string= "" ident)))
-      (hs-process-info-of-passive-interactive ident))))
+  (if (or (hs-mode-in-string-p) (hs-mode-in-comment-p))
+      (insert " ")
+      (progn (insert " ")
+             (backward-char)
+             (let ((ident (hs-ident-at-point)))
+               (cond ((string= ident "if")
+                      (backward-kill-word 1)
+                      (hs-insert-if))
+                     (t
+                      (forward-char)
+                      (when (and (stringp ident) (not (string= "" ident)))
+                        (hs-process-info-of-passive-interactive ident))))))))
+
+(defun hs-mode-in-string-p ()
+  "Are we in a string? This is a bit of a cheeky trick, but it should be quite reliable."
+  (eq (get-text-property 0 'face (buffer-substring (1- (point)) (1+ (point))))
+      'font-lock-string-face))
+
+(defun hs-mode-in-comment-p ()
+  "Are we in a comment? Again, cheeky trick."
+  (let ((face (get-text-property 0 'face (buffer-substring (1- (point)) (1+ (point))))))
+    (or (eq face 'font-lock-comment-face)
+        (eq face 'font-lock-doc-face))))
 
 (defun hs-mode-insert-at-top (s)
   "Insert some string at the top of the line."
@@ -183,5 +201,23 @@ May return a qualified name."
     (switch-to-buffer-other-window
      (hs-interactive-mode-buffer project))
     (other-window 1)))
+
+(defun hs-insert-if ()
+  "Fairly cleverly insert if expressions."
+  (interactive)
+  (if (not (string-match "^[ ]*$" (buffer-substring-no-properties (point) (line-end-position))))
+      (let ((in-parens? (save-excursion (backward-char) (looking-at "([ ]*)"))))
+        (progn (insert (format "%sif  then  else %s"
+                               (if in-parens? "" "(")
+                               (if in-parens? "" ")")))
+               (backward-word 2)
+               (backward-char)))
+    (let ((col (current-column)))
+      (insert (format "(if\n%s    then \n%s    else )" 
+                      (make-string col ? )
+                      (make-string col ? )))
+      (backward-word 3)
+      (forward-word)
+      (insert " "))))
 
 (provide 'hs-mode)
