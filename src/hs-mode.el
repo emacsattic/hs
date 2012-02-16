@@ -171,12 +171,12 @@ May return a qualified name."
 
 (defun hs-mode-in-string-p ()
   "Are we in a string? This is a bit of a cheeky trick, but it should be quite reliable."
-  (eq (get-text-property 0 'face (buffer-substring (1- (point)) (1+ (point))))
+  (eq (get-text-property 0 'face (buffer-substring (max (point-min) (1- (point))) (min (point-max) (1+ (point)))))
       'font-lock-string-face))
 
 (defun hs-mode-in-comment-p ()
   "Are we in a comment? Again, cheeky trick."
-  (let ((face (get-text-property 0 'face (buffer-substring (1- (point)) (1+ (point))))))
+  (let ((face (get-text-property 0 'face (buffer-substring (max (point-min) (1- (point))) (min (point-max) (1+ (point)))))))
     (or (eq face 'font-lock-comment-face)
         (eq face 'font-lock-doc-face))))
 
