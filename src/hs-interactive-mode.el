@@ -290,11 +290,12 @@
 (defun hs-interactive-mode-clear ()
   "Newline and indent at the prompt."
   (interactive)
-  (let ((inhibit-read-only t))
-    (set-text-properties (point-min) (point-max) nil))
-  (delete-region (point-min) (point-max))
-  (mapcar 'delete-overlay (overlays-in (point-min) (point-max)))
-  (hs-interactive-mode-prompt (hs-project)))
+  (with-current-buffer (hs-interactive-mode-buffer (hs-project))
+    (let ((inhibit-read-only t))
+      (set-text-properties (point-min) (point-max) nil))
+    (delete-region (point-min) (point-max))
+    (mapcar 'delete-overlay (overlays-in (point-min) (point-max)))
+    (hs-interactive-mode-prompt (hs-project))))
 
 (defun hs-interactive-mode-raise (project msg)
   "Raise an error buffer."
