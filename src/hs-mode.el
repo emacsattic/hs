@@ -205,21 +205,17 @@ May return a qualified name."
 (defun hs-insert-if ()
   "Fairly cleverly insert if expressions."
   (interactive)
-  (if (not (string-match "^[ ]*$" (buffer-substring-no-properties (point) (line-end-position))))
+  (if (not (string-match "^[ ]*$" (buffer-substring-no-properties (line-beginning-position) (point))))
       (let ((in-parens? (save-excursion (backward-char) (looking-at "([ ]*)"))))
         (progn (insert (format "%sif  then  else %s"
                                (if in-parens? "" "(")
                                (if in-parens? "" ")")))
                (backward-word 2)
                (backward-char)))
-    (let* ((col (current-column))
-           (start-of-line (string-match "^[ ]*$" (buffer-substring-no-properties (line-beginning-position) (point))))
-           (offset (if start-of-line 0 1)))
-      (insert (format "%sif\n%s   then \n%s   else %s"
-                      (if start-of-line "" "(")
-                      (make-string (- col offset) ? )
-                      (make-string (- col offset) ? )
-                      (if start-of-line "" ")")))
+    (let* ((col (current-column)))
+      (insert (format "if\n%s   then \n%s   else"
+                      (make-string col ? )
+                      (make-string col ? )))
       (backward-word 3)
       (forward-word)
       (insert " "))))
