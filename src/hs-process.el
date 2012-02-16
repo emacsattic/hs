@@ -241,7 +241,8 @@
     ('info-of (progn (hs-message-line response)
                      (hs-interactive-mode-echo-type project response)
                      t))
-    ('info-of-passive (progn (hs-message-line response)
+    ('info-of-passive (progn (unless (string-match "^Top level: Not in scope" response)
+                               (hs-message-line response))
                              t))
     ('build
      (if (hs-process-consume
