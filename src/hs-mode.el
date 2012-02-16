@@ -161,7 +161,7 @@ May return a qualified name."
       (progn (insert " ")
              (backward-char)
              (let ((ident (hs-ident-at-point)))
-               (cond ((string= ident "if")
+               (cond ((and (string= ident "if") hs-config-clever-ifs)
                       (backward-kill-word 1)
                       (hs-insert-if))
                      (t
@@ -212,10 +212,14 @@ May return a qualified name."
                                (if in-parens? "" ")")))
                (backward-word 2)
                (backward-char)))
-    (let ((col (current-column)))
-      (insert (format "(if\n%s    then \n%s    else )" 
-                      (make-string col ? )
-                      (make-string col ? )))
+    (let* ((col (current-column))
+           (start-of-line (string-match "^[ ]*$" (buffer-substring-no-properties (line-beginning-position) (point))))
+           (offset (if start-of-line 0 1)))
+      (insert (format "%sif\n%s   then \n%s   else %s"
+                      (if start-of-line "" "(")
+                      (make-string (- col offset) ? )
+                      (make-string (- col offset) ? )
+                      (if start-of-line "" ")")))
       (backward-word 3)
       (forward-word)
       (insert " "))))
