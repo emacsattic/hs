@@ -116,7 +116,7 @@
    ;; Useful editing features of paredit.
    (define-key hs-mode-map (kbd "\"") 'paredit-doublequote)
    (define-key hs-mode-map (kbd "[") 'paredit-open-square)
-   (define-key hs-mode-map (kbd "(") 'paredit-open-round)
+   (define-key hs-mode-map (kbd "(") 'hs-open-round)
    (define-key hs-mode-map (kbd "]") 'paredit-close-square)
    (define-key hs-mode-map (kbd ")") 'paredit-close-round)
    (define-key hs-mode-map (kbd "{") 'paredit-open-curly)
