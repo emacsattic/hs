@@ -36,7 +36,7 @@
 ;; * 'hs-indent-glfsf-cycle — A simple de-indentation function based on hs-indent-hsgm.
 (defvar hs-config-unindent-function 'hs-indent-hsgm-backtab)
 
-(defvar hs-config-pretty-print-show t
+(defvar hs-config-pretty-print-show nil
   "Pretty print Show instances in the REPL? Disable this if it annoys you.")
 
 (defvar hs-config-echo-all nil)
