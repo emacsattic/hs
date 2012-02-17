@@ -73,14 +73,8 @@
                                   :current-dir nil
                                   :response-callback nil)))
     (hs-process-start-ghci project process)
-    (if name
-        (progn
-          (set-process-sentinel (hs-process-process process)
-                                'hs-process-slave-sentinel)
-          (set-process-filter (hs-process-process process)
-                              'hs-process-slave-filter))
-      (progn (set-process-sentinel (hs-process-process process) 'hs-process-sentinel)
-             (set-process-filter (hs-process-process process) 'hs-process-filter)))
+    (progn (set-process-sentinel (hs-process-process process) 'hs-process-sentinel)
+           (set-process-filter (hs-process-process process) 'hs-process-filter))
     (process-send-string (hs-process-process process) (concat ":set prompt \"> \"\n"))
     (process-send-string (hs-process-process process) ":set -v1\n")
     (process-send-string (hs-process-process process) (concat "()\n"))
@@ -115,18 +109,6 @@
                             (hs-project-process project)
                             'main)))))
 
-(defun hs-process-slave-filter (proc response)
-  "The filter for the slave process pipe."
-  (when hs-config-echo-all (message "%s" response))
-  (let ((project (hs-process-project-by-proc proc "slave")))
-    (when project
-      (when (not (eq (hs-process-cmd (hs-project-slave-process project))
-                     'none))
-        (hs-process-collect project
-                            response
-                            (hs-project-slave-process project)
-                            'slave)))))
-
 (defun hs-process-sentinel (proc event)
   "The sentinel for the process pipe."
   (let ((event (replace-regexp-in-string "\n$" "" event)))
@@ -140,42 +122,20 @@
           (hs-interactive-mode-set-prompt ""))
         (hs-process-prompt-restart project)))))
 
-(defun hs-process-slave-sentinel (proc event)
-  "The sentinel for the process pipe."
-  (let ((event (replace-regexp-in-string "\n$" "" event)))
-    (message (hs-lang-process-ended event))
-    (let ((project (hs-process-project-by-proc proc "slave")))
-      (when project
-        (hs-interactive-mode-echo-error project (hs-lang-process-ended event))
-        (when (and (eq 'eval (hs-process-cmd (hs-project-slave-process project)))
-                   (string= (hs-interactive-mode-input project)
-                            ":q"))
-          (hs-interactive-mode-set-prompt ""))
-        (hs-process-slave-prompt-restart project)))))
-
 (defun hs-process-prompt-restart (project)
   (when (y-or-n-p "The Haskell process died. Restart? ")
     (setf (hs-project-process project)
           (hs-process-start project))))
 
-(defun hs-process-slave-prompt-restart (project)
-  (when (y-or-n-p "The slave Haskell process died. Restart? ")
-    (setf (hs-project-slave-process project)
-          (hs-process-start project "slave"))))
-
-(defun hs-process-project-by-proc (proc &optional slave)
+(defun hs-process-project-by-proc (proc)
   "Find project by process."
   (find-if (lambda (project)
-             (if slave
-                 (string= (concat (hs-project-name project) "-" slave)
-                          (process-name proc))
-               (string= (hs-project-name project)
-                        (process-name proc))))
+             (string= (hs-project-name project)
+                      (process-name proc)))
            *hs-projects*))
 
 (defun hs-process-collect (project response process type)
   "Collect input for the response until receives a prompt."
-  ;(message (format "%s: %s" (hs-process-name process) response))
   (setf (hs-process-response process)
         (concat (hs-process-response process) response))
   (while (hs-process-live-updates project process))
@@ -478,12 +438,7 @@
                          file
                        (buffer-file-name))))
       (if hs-config-preliminary-load-file
-          (progn
-            (setf (hs-project-current-load-file-name project) file-name)
-            (hs-process-queue-slave-command 
-             project
-             'load-file-prelim
-             (concat ":load " file-name "\n")))
+          (setf (hs-project-current-load-file-name project) file-name)
         (hs-process-queue-command 
          project
          'load-file
@@ -494,10 +449,7 @@
   (if (file-directory-p dir)
       (progn
         (setf (hs-process-current-dir (hs-project-process project)) dir)
-        (setf (hs-process-current-dir (hs-project-slave-process project)) dir)
         (process-send-string (hs-process-process (hs-project-process project))
-                             (concat ":cd " dir "\n"))
-        (process-send-string (hs-process-process (hs-project-slave-process project))
                              (concat ":cd " dir "\n"))
         (hs-interactive-mode-echo-read-only
          project
@@ -540,24 +492,15 @@
   (setf (hs-process-queue (hs-project-process project))
         (append (hs-process-queue (hs-project-process project))
                 (list (list cmd data))))
-  ;(message (format "Queued command `%s' with data: %s" cmd data))
+                                        ;(message (format "Queued command `%s' with data: %s" cmd data))
   (when (= 1 (length (hs-process-queue (hs-project-process project))))
     (hs-process-trigger-queued-command (hs-project-process project))))
-
-(defun hs-process-queue-slave-command (project cmd data)
-  "Add a command to the slave queue to be processed in FIFO."
-  (setf (hs-process-queue (hs-project-slave-process project))
-        (append (hs-process-queue (hs-project-slave-process project))
-                (list (list cmd data))))
-  ;(message (format "Queued command `%s' with data: %s" cmd data))
-  (when (= 1 (length (hs-process-queue (hs-project-slave-process project))))
-    (hs-process-trigger-queued-command (hs-project-slave-process project))))
 
 (defun hs-process-trigger-queued-command (process)
   "Trigger a the next command in the command queue to be sent to the process."
   (unless (null (hs-process-queue process))
     (let ((cmd (car (hs-process-queue process))))
-      ;(message (format "Triggering queued command `%s'." (car cmd)))
+                                        ;(message (format "Triggering queued command `%s'." (car cmd)))
       (setf (hs-process-cmd process) (car cmd))
       (process-send-string (hs-process-process process) (cadr cmd)))))
 

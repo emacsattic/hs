@@ -104,7 +104,6 @@
         (cabal-dir (hs-cabal-get-dir)))
     (let* ((project (hs-project-make 
                      :process nil
-                     :slave-process nil
                      :name name
                      :cabal-dir cabal-dir
                      :cabal-dev-dir (concat cabal-dir "/cabal-dev")
@@ -113,8 +112,6 @@
            (buffer (hs-interactive-mode-create project)))
       (setf (hs-project-process project)
             (hs-process-start project))
-      (setf (hs-project-slave-process project)
-            (hs-process-start project "slave"))
       (add-to-list '*hs-projects* project)
       project)))
 
