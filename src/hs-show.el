@@ -131,16 +131,18 @@
                        (button-put button 'hide-on-click t)))))
                (insert "\"")))
     ('data (let* ((data (cdr tree))
-                  (parens (and parens
-                               (cdr data)
-                               (car (cdr data))))
+                  (has-childs (and  (cdr data)
+                                    (car (cdr data))))
+                  (parens (and parens has-childs))
                   (overlay (list 'nil)))
              (insert (if parens "(" ""))
              (let ((link-start (point)))
                (insert (car data))
-               (let ((button (make-text-button link-start (point) :type 'hs-show-toggle-button)))
+               (let ((button (when has-childs
+                               (make-text-button link-start (point) :type 'hs-show-toggle-button))))
                  (put-text-property link-start (point) 'face 'font-lock-type-face)
-                 (button-put button 'overlay overlay)))
+                 (when has-childs
+                   (button-put button 'overlay overlay))))
              (let ((constructor-start (point))
                    (sub-col (+ (length (car data)) 1 column)))
                (unless (null (cdr data))
