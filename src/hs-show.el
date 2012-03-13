@@ -130,19 +130,30 @@
                        (button-put button 'overlay (list overlay))
                        (button-put button 'hide-on-click t)))))
                (insert "\"")))
-    ('data (let ((data (cdr tree)))
+    ('data (let* ((data (cdr tree))
+                  (parens (and parens
+                               (cdr data)
+                               (car (cdr data))))
+                  (overlay (list 'nil)))
              (insert (if parens "(" ""))
-             (let ((cons-start (point)))
+             (let ((link-start (point)))
                (insert (car data))
-               (put-text-property cons-start (point) 'face 'font-lock-type-face))
-             (unless (null (cdr data))
-               (progn (insert " ")
-                      (hs-show-mapcar/i
-                       (lambda (x i len)
-                         (hs-show-insert-pretty column x t)
-                         (unless (> i (- len 2))
-                           (insert " ")))
-                       (cdr data))))
+               (let ((button (make-text-button link-start (point) :type 'hs-show-toggle-button)))
+                 (put-text-property link-start (point) 'face 'font-lock-type-face)
+                 (button-put button 'overlay overlay)))
+             (let ((constructor-start (point)))
+               (unless (null (cdr data))
+                 (progn (insert " ")
+                        (hs-show-mapcar/i
+                         (lambda (x i len)
+                           (hs-show-insert-pretty column x t)
+                           (unless (> i (- len 2))
+                             (insert " ")))
+                         (when (cdr data)
+                           (car (cdr data))))))
+               (progn
+                 (setf (car overlay) (make-overlay constructor-start (point) nil t))
+                 (overlay-put (car overlay) 'invisible t)))
              (insert (if parens ")" ""))))
     ('char (progn (insert "'")
                   (insert (char-to-string (cdr tree)))
@@ -191,16 +202,21 @@
                        (if parens ")" ""))))
     ('num (format "%s" (cdr tree)))
     ('string (format "%S" (cdr tree)))
-    ('data (let ((data (cdr tree)))
+    ('data (let* ((data (cdr tree))
+                  (parens (and parens
+                               (cdr data)
+                               (car (cdr data)))))
              (format "%s%s%s%s"
-                     (if parens "(" "")
+                     (if parens (format "(%s:" (car (cdr data))) "")
                      (car data)
                      (if (null (cdr data))
                          ""
                        (concat " "
                                (mapconcat
-                                (lambda (x) (hs-show-pretty x t))
-                                (cdr data)
+                                (lambda (x)
+                                  (hs-show-pretty x t))
+                                (when (cdr data)
+                                  (car (cdr data)))
                                 " ")))
                      (if parens ")" ""))))
     ('tuple (format "(%s)"
@@ -268,17 +284,20 @@
                      tuple-literal))
     (data (list constructor-name
                 (* (list " "
-                         (or number
-                             data
+                         (or constructor-name-only
+                             number
                              string
                              char
                              list-literal
                              tuple-literal
                              parens))))
           `(stuff -- `(data . (,(car stuff) .
-                               ,(cadr stuff)))))
+                               ,(when (cdr stuff)
+                                  (list (mapcar 'car (cdr stuff))))))))
     (number (substring (+ [0-9 ?.]))
             `(n -- `(num . ,(string-to-number n))))
+    (constructor-name-only (list constructor-name)
+                           `(name -- `(data . ,name)))
     (constructor-name (or (substring ":" (+ (not " ") (any)))
                           (substring [A-Z] (* [A-Z a-z 0-9 ?_ ?']))))
     (string (substring "\"" 
@@ -331,9 +350,11 @@
   `(("(A)" (data . ("A" . ())))
     ("A" (data . ("A" . ())))
     ("Bar" (data . ("Bar" . ())))
-    ("Bar (Mu)" (data . ("Bar" . ((data . ("Mu" . ()))))))
+    ("Bin 2 Leaf Leaf" (data "Bin" ((num . 2) (data "Leaf") (data "Leaf"))))
+    ("Bar Mu" (data . ("Bar" . (((data . ("Mu" . ())))))))
+    ("Bar 1" (data "Bar" ((num . 1))))
+    ("Bar 1 2" (data "Bar" ((num . 1) (num . 2))))
     ("1" (num . 1))
-    ("/+0-'24" (arbitrary . "/+0-'24"))
     ("'a'" (char . ?a))
     ("'\\''" (char . ?'))
     (":+" (data . (":+" . ())))
