@@ -141,14 +141,15 @@
                (let ((button (make-text-button link-start (point) :type 'hs-show-toggle-button)))
                  (put-text-property link-start (point) 'face 'font-lock-type-face)
                  (button-put button 'overlay overlay)))
-             (let ((constructor-start (point)))
+             (let ((constructor-start (point))
+                   (sub-col (+ (length (car data)) 1 column)))
                (unless (null (cdr data))
                  (progn (insert " ")
                         (hs-show-mapcar/i
                          (lambda (x i len)
-                           (hs-show-insert-pretty column x t)
+                           (hs-show-insert-pretty (+ 1 sub-col) x t)
                            (unless (> i (- len 2))
-                             (insert " ")))
+                             (insert (concat "\n" (hs-show-indent sub-col "")))))
                          (when (cdr data)
                            (car (cdr data))))))
                (progn
