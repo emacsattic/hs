@@ -27,6 +27,17 @@
 
 (require 'peg)
 
+(defun hs-show-replace-region ()
+  "Replace the given region containing a Show value with a pretty
+  printed collapsible version."
+  (interactive)
+  (let ((start (region-beginning))
+        (end (region-end)))
+   (let ((text (buffer-substring-no-properties start end)))
+     (goto-char start)
+     (delete-region start end)
+     (hs-show-parse-and-insert text))))
+
 (defun hs-show-replace (start end)
   "Replace the given region containing a Show value with a pretty
   printed collapsible version."
